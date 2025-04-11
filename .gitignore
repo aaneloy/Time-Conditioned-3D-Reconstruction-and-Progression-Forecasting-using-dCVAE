@@ -1,0 +1,27 @@
+# Ignore all checkpoint files
+checkpoints/
+*.pt
+
+# Ignore large image/gif outputs
+results/train_epoch_outputs/
+results/test_outputs/
+results/inference_outputs/
+
+# Ignore all .nii/.nii.gz medical image files
+*.nii
+*.nii.gz
+
+# Ignore temporary files
+*.zip
+*.tar
+*.tar.gz
+*.tmp
+# .gitignore
+venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+*.log
+
+

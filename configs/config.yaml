@@ -1,0 +1,23 @@
+model:
+  latent_dim: 64                  # Reduced to prevent overfitting (128 was too high for now)
+  input_size: [64, 64]            # Match with actual input used in training (you were resizing to 64x64)
+  output_3d_shape: [64, 64, 64]   # OK as-is
+
+training:
+  epochs: 100                     # Increase to let model learn more
+  learning_rate: 0.001            # Increase learning rate for faster convergence
+  batch_size: 4                   # Reduce if using CPU or limited GPU (especially with 3D volumes)
+  num_workers: 2                  # Set to 0 to avoid multiprocessing issues on Windows
+
+time_control:
+  prediction_times_months: [0, 3, 6, 12]
+
+paths:
+  dataset: "data/datasets/brats2021/"
+  processed_data: "data/processed/"
+  checkpoints: "checkpoints/"
+  results: "results/"
+  logs: "logs/"
+
+seed: 42
+device: "auto"
