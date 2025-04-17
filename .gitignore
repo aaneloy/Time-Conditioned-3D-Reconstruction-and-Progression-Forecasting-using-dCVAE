@@ -8,8 +8,8 @@ results/test_outputs/
 results/inference_outputs/
 
 # Ignore all .nii/.nii.gz medical image files
-*.nii
-*.nii.gz
+#*.nii
+#*.nii.gz
 
 # Ignore temporary files
 *.zip

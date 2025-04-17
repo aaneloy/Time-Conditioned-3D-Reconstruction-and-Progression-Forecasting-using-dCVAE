@@ -14,6 +14,7 @@ from tqdm import tqdm
 import yaml
 import imageio
 import numpy as np
+from matplotlib.backends.backend_agg import FigureCanvasAgg as FigureCanvas
 
 def save_epoch_visuals(epoch, input_2d, recon_3d, original_3d, output_dir):
     os.makedirs(output_dir, exist_ok=True)
@@ -23,29 +24,33 @@ def save_epoch_visuals(epoch, input_2d, recon_3d, original_3d, output_dir):
     gt_vol = original_3d.detach().squeeze().cpu().numpy()
     mid_slice = recon_vol.shape[0] // 2
 
-    # Save PNG comparison (tight layout)
+    # Save PNG comparison (tight layout, color)
     fig, axs = plt.subplots(1, 3, figsize=(12, 4))
     axs[0].imshow(input_img, cmap='viridis')
     axs[0].set_title("Input 2D")
     axs[1].imshow(recon_vol[mid_slice], cmap='viridis')
-    axs[1].set_title("Recon z={}".format(mid_slice))
+    axs[1].set_title(f"Recon z={mid_slice}")
     axs[2].imshow(gt_vol[mid_slice], cmap='viridis')
-    axs[2].set_title("GT z={}".format(mid_slice))
+    axs[2].set_title(f"GT z={mid_slice}")
     for ax in axs: ax.axis('off')
     plt.tight_layout()
-    plt.savefig(os.path.join(output_dir, f"epoch_{epoch}_comparison.png"), bbox_inches='tight', pad_inches=0)
+    png_path = os.path.join(output_dir, f"epoch_{epoch}_comparison.png")
+    plt.savefig(png_path, bbox_inches='tight', pad_inches=0)
     plt.close()
 
-    # Save RGB GIF of recon volume
+    # Save RGB GIF using canvas-based extraction
     gif_frames = []
     for z in range(recon_vol.shape[0]):
-        fig, ax = plt.subplots()
+        fig, ax = plt.subplots(figsize=(3, 3))
+        canvas = FigureCanvas(fig)
         ax.imshow(recon_vol[z], cmap='viridis')
         ax.axis('off')
-        fig.canvas.draw()
-        frame = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
-        frame = frame.reshape(fig.canvas.get_width_height()[::-1] + (3,))
-        gif_frames.append(frame)
+        fig.tight_layout(pad=0)
+        canvas.draw()
+        buf = np.frombuffer(canvas.tostring_argb(), dtype='uint8')
+        w, h = canvas.get_width_height()
+        image = buf.reshape((h, w, 4))
+        gif_frames.append(image)
         plt.close(fig)
 
     gif_path = os.path.join(output_dir, f"epoch_{epoch}_reconstruction.gif")
@@ -107,7 +112,6 @@ def main():
                 TC=total_tc_loss / (i + 1)
             )
 
-            # Save sample from first batch
             if i == 0:
                 save_epoch_visuals(
                     epoch+1, noisy_2d[0].cpu(), recon_volume[0].cpu(), volume[0].cpu(),

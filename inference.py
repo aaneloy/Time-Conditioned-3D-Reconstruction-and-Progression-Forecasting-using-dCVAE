@@ -1,5 +1,7 @@
 import os
 os.environ["KMP_DUPLICATE_LIB_OK"] = "TRUE"
+import matplotlib
+matplotlib.use('Agg')  # Use non-GUI backend for script-based image saving
 
 import torch
 import nibabel as nib
@@ -51,7 +53,7 @@ def save_inference_visuals(t_months, input_2d, recon_3d, output_dir):
         ax.imshow(recon_vol[z], cmap='viridis')
         ax.axis('off')
         fig.canvas.draw()
-        frame = np.frombuffer(fig.canvas.tostring_rgb(), dtype='uint8')
+        frame = np.frombuffer(fig.canvas.tostring_argb(), dtype='uint8')
         frame = frame.reshape(fig.canvas.get_width_height()[::-1] + (3,))
         gif_frames.append(frame)
         plt.close(fig)
