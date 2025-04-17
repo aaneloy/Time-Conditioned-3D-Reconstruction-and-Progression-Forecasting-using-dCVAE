@@ -25,10 +25,11 @@ class Encoder(nn.Module):
         self._fc_init_done = False
 
     def _initialize_fc(self, flat_dim):
-        self.fc_mu = nn.Linear(flat_dim, self.latent_dim)
-        self.fc_logvar = nn.Linear(flat_dim, self.latent_dim)
+        device = next(self.parameters()).device  # get current device of encoder
+        self.fc_mu = nn.Linear(flat_dim, self.latent_dim).to(device)
+        self.fc_logvar = nn.Linear(flat_dim, self.latent_dim).to(device)
         self._fc_init_done = True
-        print(f"[DEBUG] FC layers initialized with flat_dim: {flat_dim}")
+        print(f"[DEBUG] FC layers initialized with flat_dim: {flat_dim} on {device}")
 
     def forward(self, x):
         batch_size = x.size(0)

@@ -24,7 +24,6 @@ def save_epoch_visuals(epoch, input_2d, recon_3d, original_3d, output_dir):
     gt_vol = original_3d.detach().squeeze().cpu().numpy()
     mid_slice = recon_vol.shape[0] // 2
 
-    # Save PNG comparison (tight layout, color)
     fig, axs = plt.subplots(1, 3, figsize=(12, 4))
     axs[0].imshow(input_img, cmap='viridis')
     axs[0].set_title("Input 2D")
@@ -38,7 +37,6 @@ def save_epoch_visuals(epoch, input_2d, recon_3d, original_3d, output_dir):
     plt.savefig(png_path, bbox_inches='tight', pad_inches=0)
     plt.close()
 
-    # Save RGB GIF using canvas-based extraction
     gif_frames = []
     for z in range(recon_vol.shape[0]):
         fig, ax = plt.subplots(figsize=(3, 3))
@@ -86,10 +84,10 @@ def main():
         for i, volume in enumerate(progress_bar):
             volume = volume.to(device).float()
             noisy_2d = torch.stack([
-                generate_noisy_2d_slice(vol[0]).float() for vol in volume
-            ]).to(device)
+                generate_noisy_2d_slice(vol[0]).float().to(device) for vol in volume
+            ])
 
-            t = torch.tensor([cfg['time_control']['prediction_times_months'][0]] * volume.size(0)).to(device)
+            t = torch.tensor([cfg['time_control']['prediction_times_months'][0]] * volume.size(0)).float().to(device)
             recon_volume, mu, logvar, z = model(noisy_2d, t)
 
             loss, recon_loss, kl_loss, tc_loss = dCVAE_loss(
@@ -127,7 +125,6 @@ def main():
         checkpoint_path = os.path.join(cfg['paths']['checkpoints'], f"dcvae_epoch_{epoch+1}.pt")
         save_checkpoint(model, optimizer, epoch+1, checkpoint_path)
 
-    # Plot and save loss curves (tightly)
     os.makedirs(cfg['paths']['results'], exist_ok=True)
     plt.figure(figsize=(10, 6))
     plt.plot(loss_history["total"], label="Total Loss")
