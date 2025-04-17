@@ -10,6 +10,7 @@ results/inference_outputs/
 # Ignore all .nii/.nii.gz medical image files
 #*.nii
 #*.nii.gz
+data/datasets/
 
 # Ignore temporary files
 *.zip
