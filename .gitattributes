@@ -287,3 +287,5 @@ data/datasets/brats2021/BraTS2021_01654/BraTS2021_01654_flair.nii.gz filter=lfs 
 data/datasets/brats2021/BraTS2021_01654/BraTS2021_01654_t1.nii.gz filter=lfs diff=lfs merge=lfs -text
 data/datasets/brats2021/BraTS2021_01654/BraTS2021_01654_t1ce.nii.gz filter=lfs diff=lfs merge=lfs -text
 data/datasets/brats2021/BraTS2021_01654/BraTS2021_01654_t2.nii.gz filter=lfs diff=lfs merge=lfs -text
+data/** filter=lfs diff=lfs merge=lfs -text
+checkpoints/** filter=lfs diff=lfs merge=lfs -text
