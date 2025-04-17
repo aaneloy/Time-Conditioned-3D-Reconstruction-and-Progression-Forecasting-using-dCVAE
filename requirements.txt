@@ -17,7 +17,7 @@ nibabel==5.2.0
 
 # Visualization
 matplotlib==3.8.3
-tqdm==4.66.2
+tqdm==4.66.3
 
 # Data + YAML
 pandas==2.1.4
